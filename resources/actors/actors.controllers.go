@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	"gorm.io/gorm"
 )
 
 func ListActors(w http.ResponseWriter, r *http.Request) {
@@ -86,15 +87,33 @@ func EditActorById(w http.ResponseWriter, r *http.Request) {
 
 func GetActorById(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "actorId")
-	var actor Actor
-	result := db.DB.First(&actor, id)
-	if result.Error != nil {
-		log.Println("Get actor by id: ", id, " - NOT FOUND")
-		render.Render(w, r, e.ErrNotFound(result.Error))
+
+	// Get the actor with the specified ID, including their films
+	actor := &Actor{}
+	result := db.DB.Preload("Films").First(actor, id)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		render.Render(w, r, e.ErrNotFound(errors.New("no films found")))
 		return
 	}
-	log.Println("Get actor by id: ", id, " - FOUND")
-	render.Render(w, r, NewActorResponse(&actor))
+	if result.Error != nil {
+		render.Render(w, r, e.ErrServerInternal(result.Error))
+		return
+	}
+
+	// Render the actor with films as the response
+	render.Render(w, r, NewActorResponse(actor))
+
+	// var actor Actor
+	// result := db.DB.First(&actor, id)
+	// if result.Error != nil {
+	// 	log.Println("Get actor by id: ", id, " - NOT FOUND")
+	// 	render.Render(w, r, e.ErrNotFound(result.Error))
+	// 	return
+	// }
+	// var films []*Film
+
+	// log.Println("Get actor by id: ", id, " - FOUND")
+	// render.Render(w, r, NewActorResponse(&actor))
 }
 
 func GetActorByName(w http.ResponseWriter, r *http.Request) {
