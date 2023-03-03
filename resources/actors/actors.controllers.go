@@ -6,6 +6,7 @@ import (
 	e "go-sakila-api/error"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -87,6 +88,11 @@ func EditActorById(w http.ResponseWriter, r *http.Request) {
 
 func GetActorById(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "actorId")
+	_, err := strconv.Atoi(id)
+	if err != nil {
+		render.Render(w, r, e.ErrInvalidRequest(err))
+		return
+	}
 
 	// Get the actor with the specified ID, including their films
 	actor := &Actor{}

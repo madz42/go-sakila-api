@@ -9,7 +9,7 @@ import (
 func Init() {
 	var port string
 	if port = os.Getenv("PORT"); port == "" {
-		port = "3000"
+		port = "4000"
 	}
 
 	router := Router()

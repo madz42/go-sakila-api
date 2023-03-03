@@ -4,6 +4,7 @@ import (
 	"errors"
 	db "go-sakila-api/database"
 	e "go-sakila-api/error"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -45,4 +46,20 @@ func GetFilmById(w http.ResponseWriter, r *http.Request) {
 
 	// log.Println("Get actor by id: ", id, " - FOUND")
 	// render.Render(w, r, NewActorResponse(&actor))
+}
+
+func GetFilmByName(w http.ResponseWriter, r *http.Request) {
+	name := chi.URLParam(r, "name")
+	var films []*Film
+	result := db.DB.Where("title LIKE ?", "%"+name+"%").Find(&films)
+	if result.Error != nil {
+		render.Render(w, r, e.ErrServerInternal(result.Error))
+		return
+	}
+	log.Println("Search film by '", name, "' - results:", result.RowsAffected)
+	if result.RowsAffected == 0 {
+		render.Render(w, r, e.ErrNotFound(errors.New("no match")))
+		return
+	}
+	render.RenderList(w, r, NewFilmListResponse(films))
 }
