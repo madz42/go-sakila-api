@@ -32,20 +32,7 @@ func GetFilmById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Render the actor with films as the response
 	render.Render(w, r, NewFilmResponse(film))
-
-	// var actor Actor
-	// result := db.DB.First(&actor, id)
-	// if result.Error != nil {
-	// 	log.Println("Get actor by id: ", id, " - NOT FOUND")
-	// 	render.Render(w, r, e.ErrNotFound(result.Error))
-	// 	return
-	// }
-	// var films []*Film
-
-	// log.Println("Get actor by id: ", id, " - FOUND")
-	// render.Render(w, r, NewActorResponse(&actor))
 }
 
 func GetFilmByName(w http.ResponseWriter, r *http.Request) {

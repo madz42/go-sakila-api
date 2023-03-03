@@ -69,17 +69,10 @@ type Film struct {
 	Title       string `gorm:"type:varchar(255)"`
 	Description string `gorm:"type:text"`
 	ReleaseYear int    `gorm:"type:year(4)"`
-	// LanguageId      int       `gorm:"type:tinyint"`
-	// OriginalLangId  int       `gorm:"type:tinyint"`
-	// RentalDuration  int       `gorm:"type:tinyint"`
-	// RentalRate      float32   `gorm:"type:decimal(4,2)"`
-	Length int `gorm:"type:smallint"`
-	// ReplacementCost float32   `gorm:"type:decimal(5,2)"`
-	Rating string `gorm:"type:enum('G','PG','PG-13','R','NC-17')"`
-	// SpecialFeatures string    `gorm:"type:text"`
-	// LastUpdate time.Time `gorm:"autoCreateTime"`
 
-	// Language Language `gorm:"foreignKey:LanguageId"`
+	Length int `gorm:"type:smallint"`
+
+	Rating string `gorm:"type:enum('G','PG','PG-13','R','NC-17')"`
 }
 
 func (Film) TableName() string {
@@ -97,9 +90,3 @@ func NewFilmResponse(film *Film) *FilmResponse {
 func (f *FilmResponse) Render(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
-
-// type Language struct {
-// 	LanguageId int    `gorm:"type:tinyint;primaryKey"`
-// 	Name       string `gorm:"type:char(20)"`
-// 	LastUpdate time.Time
-// }
